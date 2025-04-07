@@ -1,34 +1,37 @@
-import './App.css'
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import React from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import GuestForm from './components/GuestForm';
+import Map from './components/Map';
+import StepForm from './components/StepForm';
 
-function App() {
-  const [count, setCount] = useState(0)
+const Home: React.FC = () => {
+  const navigate = useNavigate();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ textAlign: 'center', paddingTop: '50px' }}>
+      <h1>Добро пожаловать!</h1>
+      <p>Выберите режим входа:</p>
+      <button onClick={() => navigate('/guest')} style={{ margin: '10px' }}>
+        Гостевой режим
+      </button>
+      <button onClick={() => navigate('/register')} style={{ margin: '10px' }}>
+        Регистрация бизнеса
+      </button>
+    </div>
+  );
+};
 
-export default App
+const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/guest" element={<GuestForm />} />
+        <Route path="/register" element={<StepForm isGuest={false} />} />
+        <Route path="/map" element={<Map apiKey={import.meta.env.VITE_YANDEX_MAPS_API_KEY} />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
