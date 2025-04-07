@@ -1,0 +1,28 @@
+.step-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 30px;
+}
+
+input {
+    background-color: #FFFFFF;
+    padding: 16px 24px;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 36px;
+    color: black;
+    font-size: 20px;
+}
+
+input::placeholder {
+    color: #E0E0E0;
+    font-size: 20px;
+}
+
+.input-title {
+    font-weight: 400;
+    margin-bottom: 16px;
+    margin-top: 16px;
+}

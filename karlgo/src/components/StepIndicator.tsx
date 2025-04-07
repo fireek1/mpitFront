@@ -1,4 +1,5 @@
 import React from 'react';
+import './StepIndicator.css';
 
 type Props = {
   currentStep: number;
@@ -7,16 +8,12 @@ type Props = {
 
 const StepIndicator: React.FC<Props> = ({ currentStep, totalSteps }) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+    <div className='indication'>
       {Array.from({ length: totalSteps }).map((_, i) => (
-        <div
+        <div className="indicator"
           key={i}
           style={{
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            margin: '0 5px',
-            backgroundColor: i === currentStep ? '#5A4FCF' : '#ccc',
+            backgroundColor: i === currentStep ? '#FFF' : '#4F4F4F',
           }}
         />
       ))}

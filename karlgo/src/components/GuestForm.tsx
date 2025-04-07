@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const allTags = [
-  'Музыка', 'Спорт', 'Технологии', 'Путешествия', 'Мода', 'Игры',
-  'Кино', 'Еда', 'Искусство', 'Фотография', 'Книги', 'Наука',
-];
+const allTags = ['Музыка', 'Спорт', 'Еда', 'Путешествия', 'Технологии', 'Кино', 
+    'Искусство', 'Чтение', 'Игры', 'Природа', 'Животные', 'Картины', 'Тусовки', 
+    'Концерты', 'Фотография', 'Танцы', 'Видеоблоги', 'Мода', 'Стендап', 'Настольные игры', 
+    'Косплей', 'Аниме', 'Рисование', 'Психология', 'Добровольчество', 'Йога', 'Фитнес', 'Каворкинги', 
+    'Уличная еда'];
 
 const GuestForm: React.FC = () => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const navigate = useNavigate();
 
   const availableTags = allTags.filter(tag => !selectedTags.includes(tag));
 
@@ -24,25 +23,8 @@ const GuestForm: React.FC = () => {
     setSelectedTags(selectedTags.filter(t => t !== tag));
   };
 
-  const isFormValid = (): boolean => {
-    const ageNumber = parseInt(age, 10);
-    return (
-      ageNumber > 0 &&
-      ageNumber <= 120 &&
-      gender !== '' &&
-      selectedTags.length > 0
-    );
-  };
-
   const handleSubmit = () => {
-    const guestData = {
-      age,
-      gender,
-      interests: selectedTags,
-    };
-
-    localStorage.setItem('guestData', JSON.stringify(guestData));
-    navigate('/map');
+    alert(`Возраст: ${age}, Пол: ${gender}, Интересы: ${selectedTags.join(', ')}`);
   };
 
   return (
@@ -55,8 +37,6 @@ const GuestForm: React.FC = () => {
         value={age}
         onChange={(e) => setAge(e.target.value)}
         placeholder="Введите возраст"
-        min={1}
-        max={120}
         style={{ width: '100%', marginBottom: '10px' }}
       />
 
@@ -112,7 +92,7 @@ const GuestForm: React.FC = () => {
 
       <button
         onClick={handleSubmit}
-        disabled={!isFormValid()}
+        disabled={!age || !gender || selectedTags.length === 0}
         style={{ marginTop: '20px', width: '100%' }}
       >
         Продолжить

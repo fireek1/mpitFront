@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import StepScreen from './StepScreen';
-import StepIndicator from './StepIndicator';
+import './StepForm.css';
+import OrangeLogo from '../assets/OrangeLogo';
+import BackArrow from '../assets/BackArrow';
 
 type Props = {
   isGuest: boolean;
@@ -35,17 +37,18 @@ const StepForm: React.FC<Props> = ({ isGuest }) => {
   };
 
   return (
-    <div>
-      <h3>{isGuest ? 'Гостевой режим' : 'Регистрация бизнеса'}</h3>
+    <div className='main'>
+      <OrangeLogo></OrangeLogo>
+      <h3 className='screen-title'>{isGuest ? 'Гостевой режим' : 'Создайте аккаунт'}</h3>
       <StepScreen
         step={step}
         selectedTags={selectedTags}
         onAddTag={handleAddTag}
         onRemoveTag={handleRemoveTag}/>
-      <StepIndicator currentStep={step} totalSteps={totalSteps} />
-      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-        <button onClick={prevStep} disabled={step === 0}>Назад</button>
-        <button onClick={nextStep} disabled={step === totalSteps - 1}>Далее</button>
+      
+      <div className='buttons'>
+        <button className='button-back' onClick={prevStep} disabled={step === 0}><BackArrow></BackArrow></button>
+        <button className='button-forward' onClick={nextStep} disabled={step === totalSteps - 1}>Далее</button>
       </div>
     </div>
   );

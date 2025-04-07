@@ -1,0 +1,13 @@
+.indication {
+    display: flex;
+    justify-content: 'center';
+    margin-top: '10px';
+    gap: 5px;
+}
+
+.indicator {
+    flex: 1;
+    height: 5px;
+    border-radius: 50px;
+    margin: '0 5px';
+}
