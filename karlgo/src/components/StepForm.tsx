@@ -68,7 +68,15 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     };
   
     try {
-      const response = await fetch('http://158.160.47.233:8080/v1/owner/company/', {
+      // const response = await fetch('http://158.160.47.233:8080/v1/owner/company/', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(payload),
+      // });
+
+      const response = await fetch('/v1/owner/company/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

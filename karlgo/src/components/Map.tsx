@@ -7,6 +7,15 @@ interface MapsProps {
   zoom?: number;
 }
 
+interface Company {
+  id: number;
+  name: string;
+  city: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+}
+
 declare global {
   interface Window {
     ymaps3: any;
@@ -17,21 +26,37 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
+  // Получение геопозиции
   useEffect(() => {
-    // Получение геопозиции
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserPosition([longitude, latitude]); // Yandex использует порядок: [долгота, широта]
+        setUserPosition([longitude, latitude]);
       },
-      (error) => {
-        console.error('Ошибка получения геопозиции:', error);
+      () => {
         setUserPosition([37.64, 55.76]); // Москва по умолчанию
       }
     );
   }, []);
 
+  // Загрузка компаний
+  // useEffect(() => {
+  //   fetch('http://158.160.47.233:8080/v1/geocoder/cords/geo/companies')
+  //     .then(res => res.json())
+  //     .then(data => setCompanies(data))
+  //     .catch(err => console.error('Ошибка загрузки компаний:', err));
+  // }, []);
+
+  useEffect(() => {
+    fetch('/v1/geocoder/cords/geo/companies')
+      .then(res => res.json())
+      .then(data => setCompanies(data))
+      .catch(err => console.error('Ошибка загрузки компаний:', err));
+  }, []);
+
+  // Загрузка карты
   useEffect(() => {
     if (!userPosition) return;
 
@@ -39,7 +64,6 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
       if (!mapRef.current) return;
 
       const isScriptLoaded = !!window.ymaps3;
-
       if (!isScriptLoaded && !document.querySelector('script[src*="api-maps.yandex.ru/v3"]')) {
         const script = document.createElement('script');
         script.src = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
@@ -47,27 +71,34 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
         document.head.appendChild(script);
 
         await new Promise<void>((resolve) => {
-          script.onload = () => {
-            console.log('Yandex Maps loaded');
-            resolve();
-          };
+          script.onload = () => resolve();
         });
       }
 
       await window.ymaps3.ready;
-
-      const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = window.ymaps3;
+      const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapMarker } = window.ymaps3;
 
       const map = new YMap(mapRef.current, {
         location: { center: userPosition, zoom },
       });
 
-      const schemeLayer = new YMapDefaultSchemeLayer({
-        customization: customStyles,
-      });
-
-      map.addChild(schemeLayer);
+      map.addChild(new YMapDefaultSchemeLayer({ customization: customStyles }));
       map.addChild(new YMapDefaultFeaturesLayer());
+
+      // Маркеры
+      companies.forEach(company => {
+        const marker = new YMapMarker(
+          {
+            coordinates: [parseFloat(company.longitude), parseFloat(company.latitude)],
+          },
+          document.createElement('div')
+        );
+
+        marker.element.className = 'custom-marker';
+        marker.element.innerText = company.name[0].toUpperCase();
+
+        map.addChild(marker);
+      });
 
       mapInstance.current = map;
     };
@@ -80,10 +111,11 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
         mapInstance.current = null;
       }
     };
-  }, [userPosition, apiKey, zoom]);
+  }, [userPosition, companies]);
 
   return (
-    <div className='Yandex'
+    <div
+      className="Yandex"
       ref={mapRef}
       style={{
         width: 'calc(100vw - 32px)',
