@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 
 const allTags = ['Музыка', 'Спорт', 'Еда', 'Путешествия', 'Технологии', 'Кино', 
     'Искусство', 'Чтение', 'Игры', 'Природа', 'Животные', 'Картины', 'Тусовки', 
-    'Концерты', 'Фотография', 'Танцы', 'Видеоблоги', 'Мода', 'Стендап', 'Настольные игры', 
-    'Косплей', 'Аниме', 'Рисование', 'Психология', 'Добровольчество', 'Йога', 'Фитнес', 'Каворкинги', 
-    'Уличная еда'];
+    'Концерты', 'Фотография', 'Танцы', 'Видеоблоги', 'Мода'];
 
 const GuestForm: React.FC = () => {
   const [age, setAge] = useState('');
@@ -24,7 +22,14 @@ const GuestForm: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    alert(`Возраст: ${age}, Пол: ${gender}, Интересы: ${selectedTags.join(', ')}`);
+    const userData = {
+      age,
+      gender,
+      interests: selectedTags
+    };
+  
+    localStorage.setItem('userData', JSON.stringify(userData));
+    window.location.reload(); // перезагрузим страницу — App увидит, что есть данные
   };
 
   return (
