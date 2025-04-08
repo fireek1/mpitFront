@@ -34,7 +34,7 @@ const App: React.FC = () => {
       ) : isGuest ? (
         <GuestForm />
       ) : (
-        <StepForm isGuest={false} />
+        <StepForm isGuest={false} onSuccessGuest={() => setIsGuest(true)} />
       )}
     </>
   );

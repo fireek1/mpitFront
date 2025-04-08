@@ -1,6 +1,6 @@
 .search-panel {
-    padding: 16px;
-    background-color: #1a1a1a;
+    padding: 25px 16px 16px;
+    background: linear-gradient(to bottom, #1F1F1F, #111);
     height: 100%;
     box-sizing: border-box;
   }
@@ -8,10 +8,14 @@
   .search-input {
     width: 100%;
     padding: 12px;
-    border-radius: 8px;
+    /* border-radius: 8px; */
+    border-radius: 0;
     border: none;
+    border-bottom: 1.5px #FFF solid;
+    background-color: transparent;
     margin-bottom: 16px;
     font-size: 16px;
+    letter-spacing: -0.5px;
   }
   
   .category-buttons {
@@ -33,4 +37,3 @@
   .category-button.active {
     background-color: orange;
   }
-  

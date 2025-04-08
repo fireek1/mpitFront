@@ -1,4 +1,5 @@
 import React from 'react';
+import './TagSelector.css';
 
 type TagSelectorProps = {
   allTags: string[];
@@ -15,46 +16,37 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   onRemove,
   maxTags = 3,
 }) => {
-  const availableTags = allTags.filter((tag) => !selectedTags.includes(tag));
+  const handleClick = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      onRemove(tag);
+    } else if (selectedTags.length < maxTags) {
+      onSelect(tag);
+    }
+  };
 
   return (
-    <div>
-      <label>Выберите интересы (макс. {maxTags}):</label>
+    <div className="tag-selector">
+      <label className="label-selector">
+        Выберите интересы (макс. {maxTags}):
+      </label>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', margin: '10px 0' }}>
-        {availableTags.map((tag) => (
-          <div
-            key={tag}
-            onClick={() => selectedTags.length < maxTags && onSelect(tag)}
-            style={{
-              padding: '5px 10px',
-              backgroundColor: '#eee',
-              color: 'black',
-              borderRadius: '20px',
-              cursor: 'pointer',
-            }}
-          >
-            {tag}
-          </div>
-        ))}
-      </div>
-
-      <label>Выбранные:</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-        {selectedTags.map((tag) => (
-          <div
-            key={tag}
-            onClick={() => onRemove(tag)}
-            style={{
-              padding: '5px 10px',
-              backgroundColor: '#a68df5',
-              color: 'white',
-              borderRadius: '20px',
-              cursor: 'pointer',
-            }}
-          >
-            {tag} ✕
-          </div>
-        ))}
+        {allTags.map((tag) => {
+          const isSelected = selectedTags.includes(tag);
+          return (
+            <div
+              key={tag}
+              onClick={() => handleClick(tag)}
+              className='button-select'
+              style={{
+                backgroundColor: isSelected ? '#FF6A00' : '#FFF',
+                color: isSelected ? 'white' : 'black',
+                transition: '0.2s',
+              }}
+            >
+              {tag}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

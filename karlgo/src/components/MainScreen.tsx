@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import Maps from './Map';
 import SearchPanel from './SearchPanel';
 import './MainScreen.css';
+import OrangeLogo from '../assets/OrangeLogo2';
+import User from '../assets/User';
 
 const MainScreen: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState(0);
@@ -43,11 +45,11 @@ const MainScreen: React.FC = () => {
   useEffect(() => {
     const resize = () => {
       if (containerRef.current) {
-        const gap = 16;
+        const gap = 64;
         const width = containerRef.current.offsetWidth;
         const totalGap = gap * (2 - 1);
         const slideW = (width - totalGap) / 2;
-        setSlideWidth(slideW + gap); // с учётом gap
+        setSlideWidth(slideW + gap);
       }
     };
     resize();
@@ -63,7 +65,8 @@ const MainScreen: React.FC = () => {
       onTouchEnd={handleTouchEnd}
     >
       <div className="top-bar">
-        <div className="logo-placeholder" />
+            <OrangeLogo />
+            <User />
       </div>
 
       <div

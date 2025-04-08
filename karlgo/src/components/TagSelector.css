@@ -1,0 +1,19 @@
+.label-selector {
+    color: white;
+    font-family: sans-serif;
+    margin-top: 16px;
+}
+
+.tag-selector {
+    margin-top: 16px;   
+}
+
+.button-select {
+    padding: 10px 15px;
+    background-color: #eee;
+    color: black;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: sans-serif;
+    border: none;
+}

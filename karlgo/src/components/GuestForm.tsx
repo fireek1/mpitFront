@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './GuestForm.css';
 
 const allTags = ['Музыка', 'Спорт', 'Еда', 'Путешествия', 'Технологии', 'Кино', 
     'Искусство', 'Чтение', 'Игры', 'Природа', 'Животные', 'Картины', 'Тусовки', 
@@ -9,16 +10,12 @@ const GuestForm: React.FC = () => {
   const [gender, setGender] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const availableTags = allTags.filter(tag => !selectedTags.includes(tag));
-
   const handleTagClick = (tag: string) => {
-    if (selectedTags.length < 3) {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else if (selectedTags.length < 3) {
       setSelectedTags([...selectedTags, tag]);
     }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter(t => t !== tag));
   };
 
   const handleSubmit = () => {
@@ -29,27 +26,25 @@ const GuestForm: React.FC = () => {
     };
   
     localStorage.setItem('userData', JSON.stringify(userData));
-    window.location.reload(); // перезагрузим страницу — App увидит, что есть данные
+    window.location.reload();
   };
 
   return (
-    <div>
-      <h2>Гостевой режим</h2>
+    <div className="main">
+      <h2 className="screen-title">Гостевой режим</h2>
 
-      <label>Возраст:</label>
+      <label className="form-label">Возраст:</label>
       <input
         type="number"
         value={age}
         onChange={(e) => setAge(e.target.value)}
         placeholder="Введите возраст"
-        style={{ width: '100%', marginBottom: '10px' }}
       />
 
-      <label>Пол:</label>
+      <label className="form-label">Пол:</label>
       <select
         value={gender}
         onChange={(e) => setGender(e.target.value)}
-        style={{ width: '100%', marginBottom: '10px' }}
       >
         <option value="">Выберите пол</option>
         <option value="Мужской">Мужской</option>
@@ -57,40 +52,15 @@ const GuestForm: React.FC = () => {
         <option value="Другое">Другое</option>
       </select>
 
-      <label>Выберите интересы (макс. 3):</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-        {availableTags.map(tag => (
+      <label className="form-label">Выберите интересы (макс. 3):</label>
+      <div className="tag-container">
+        {allTags.map(tag => (
           <div
             key={tag}
             onClick={() => handleTagClick(tag)}
-            style={{
-              padding: '5px 10px',
-              backgroundColor: '#eee',
-              borderRadius: '20px',
-              color: 'black',
-              cursor: 'pointer'
-            }}
+            className={`tag ${selectedTags.includes(tag) ? 'tag-selected' : ''}`}
           >
             {tag}
-          </div>
-        ))}
-      </div>
-
-      <label>Выбранные:</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-        {selectedTags.map(tag => (
-          <div
-            key={tag}
-            onClick={() => handleRemoveTag(tag)}
-            style={{
-              padding: '5px 10px',
-              backgroundColor: '#a68df5',
-              color: 'white',
-              borderRadius: '20px',
-              cursor: 'pointer'
-            }}
-          >
-            {tag} ✕
           </div>
         ))}
       </div>
@@ -98,7 +68,7 @@ const GuestForm: React.FC = () => {
       <button
         onClick={handleSubmit}
         disabled={!age || !gender || selectedTags.length === 0}
-        style={{ marginTop: '20px', width: '100%' }}
+        className="button-submit"
       >
         Продолжить
       </button>

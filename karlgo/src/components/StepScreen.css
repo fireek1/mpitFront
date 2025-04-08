@@ -3,6 +3,8 @@
     font-size: 18px;
     font-weight: 400;
     margin-bottom: 30px;
+    color: #FFFFFF;
+    font-family: sans-serif;
 }
 
 input {
@@ -25,4 +27,6 @@ input::placeholder {
     font-weight: 400;
     margin-bottom: 16px;
     margin-top: 16px;
+    color: #FFFFFF;
+    font-family: sans-serif;
 }
