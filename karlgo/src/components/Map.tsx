@@ -28,7 +28,6 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
 
-  // Получение геопозиции
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -36,25 +35,25 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
         setUserPosition([longitude, latitude]);
       },
       () => {
-        setUserPosition([37.64, 55.76]); // Москва по умолчанию
+        setUserPosition([37.64, 55.76]);
       }
     );
   }, []);
 
   // Загрузка компаний
-  // useEffect(() => {
-  //   fetch('http://158.160.47.233:8080/v1/geocoder/cords/geo/companies')
-  //     .then(res => res.json())
-  //     .then(data => setCompanies(data))
-  //     .catch(err => console.error('Ошибка загрузки компаний:', err));
-  // }, []);
-
   useEffect(() => {
-    fetch('/v1/geocoder/cords/geo/companies')
+    fetch('http://158.160.47.233:8080/v1/geocoder/cords/geo/companies')
       .then(res => res.json())
       .then(data => setCompanies(data))
       .catch(err => console.error('Ошибка загрузки компаний:', err));
   }, []);
+
+  // useEffect(() => {
+  //   fetch('/v1/geocoder/cords/geo/companies')
+  //     .then(res => res.json())
+  //     .then(data => setCompanies(data))
+  //     .catch(err => console.error('Ошибка загрузки компаний:', err));
+  // }, []);
 
   // Загрузка карты
   useEffect(() => {
@@ -85,7 +84,6 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
       map.addChild(new YMapDefaultSchemeLayer({ customization: customStyles }));
       map.addChild(new YMapDefaultFeaturesLayer());
 
-      // Маркеры
       companies.forEach(company => {
         const marker = new YMapMarker(
           {

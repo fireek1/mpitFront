@@ -1,58 +1,87 @@
 .search-panel {
-    padding: 25px 16px 16px;
-    background: linear-gradient(to bottom, #1F1F1F, #111);
-    height: 100%;
-    box-sizing: border-box;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 12px;
-    /* border-radius: 8px; */
-    border-radius: 0;
-    border: none;
-    border-bottom: 1.5px #FFF solid;
-    background-color: transparent;
-    margin-bottom: 16px;
-    font-size: 16px;
-    letter-spacing: -0.5px;
-    color: #FFF;
-  }
-  
-  .category-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
-  
-  .category-button {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: none;
-    background-color: #333;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease-in;
-    font-weight: 500;
-  }
-  
-  .category-button.active {
-    background-color: #FF6A00;
-    color: black
-  }
+  width: 100%;
+  max-width: 100%;
+  padding: 25px 16px 16px;
+  background: linear-gradient(to bottom, #1F1F1F, #111);
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+}
 
-  .company-list {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .company-card {
-    background-color: #eee;
-    padding: 12px;
-    border-radius: 8px;
-    color: #222;
-  }
-  
+.search-input {
+  width: 100%;
+  padding: 12px;
+  /* border-radius: 8px; */
+  border-radius: 0;
+  border: none;
+  border-bottom: 1.5px #FFF solid;
+  background-color: transparent;
+  margin-bottom: 16px;
+  font-size: 16px;
+  letter-spacing: -0.5px;
+  color: #FFF;
+}
+
+.category-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+  overflow: hidden;
+}
+
+.category-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background-color: #333;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+  font-weight: 500;
+}
+
+.category-button.active {
+  background-color: #FF6A00;
+  color: black
+}
+
+.company-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  max-height: calc(100vh - 250px);
+}
+
+.company-list::-webkit-scrollbar {
+  display: none;
+}
+
+.company-card {
+  background-color: #eee;
+  padding: 12px;
+  border-radius: 8px;
+  color: #222;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 0;
+}  
+
+.category-buttons::-webkit-scrollbar {
+  display: none; 
+}

@@ -32,35 +32,37 @@ const SearchPanel: React.FC = () => {
       .catch(error => console.error('Ошибка загрузки компаний:', error));
   }, []);
 
-  const categories = ['Отели', 'Рестораны', 'Мероприятия'];
+  const categories = ['Отели', 'Рестораны'];
 
   return (
-    <div className="search-panel">
-      <input 
-        type="text" 
-        className="search-input" 
-        placeholder="Куда бы вы хотели пойти?" 
-      />
-      <div className="category-buttons">
-        {categories.map((category) => (
-          <button
-            key={category}
-            className={`category-button ${activeCategory === category ? 'active' : ''}`}
-            onClick={() => handleCategoryClick(category)}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+    <div className="container-wrapper">
+      <div className="search-panel">
+        <input 
+          type="text" 
+          className="search-input" 
+          placeholder="Куда бы вы хотели пойти?" 
+        />
+        <div className="category-buttons">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`category-button ${activeCategory === category ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
 
-      <div className="company-list">
-        {companies.map(company => (
-          <div className="company-card" key={company.id}>
-            <h3>{company.name}</h3>
-            <p>{company.city}</p>
-            <p>{company.address}</p>
-          </div>
-        ))}
+        <div className="company-list">
+          {companies.map(company => (
+            <div className="company-card" key={company.id}>
+              <h3>{company.name}</h3>
+              <p>{company.city}</p>
+              <p>{company.address}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
