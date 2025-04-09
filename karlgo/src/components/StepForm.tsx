@@ -17,6 +17,7 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
   const [createdCompanyId, setCreatedCompanyId] = useState<number | null>(null);
   const [description, setDescription] = useState<string>('Генерация...');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -38,12 +39,31 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     setSelectedTags(selectedTags.filter((t) => t !== tag));
   };
 
+  const validateFields = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (step === 0) {
+      if (!formData.name.trim()) newErrors.name = 'Название организации не может быть пустым.';
+      if (!/^\d{10}$/.test(formData.inn)) newErrors.inn = 'ИНН должен содержать 10 цифр.';
+      if (!formData.organizationType.trim()) newErrors.organizationType = 'Тип организации не может быть пустым.';
+    } else if (step === 1) {
+      if (!formData.city.trim()) newErrors.city = 'Город не может быть пустым.';
+      if (!formData.address.trim()) newErrors.address = 'Адрес не может быть пустым.';
+      if (!formData.director.trim()) newErrors.director = 'ФИО руководителя не может быть пустым.';
+    } else if (step === 2) {
+      if (!formData.businessSphere.trim()) newErrors.businessSphere = 'Сфера деятельности не может быть пустой.';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const nextStep = () => {
     if (step < totalSteps - 1) {
-      if (step === 3) {
-        handleSubmit(); // отправка данных на шаге 4
-      } else {
-        setStep(step + 1);
+      if (validateFields()) {
+        if (step === 3) {
+          handleSubmit(); // отправка данных на шаге 4
+        } else {
+          setStep(step + 1);
+        }
       }
     } else {
       handleUpdateDescription(); // отправка финального описания на шаге 5
@@ -145,17 +165,28 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
         onAddTag={handleAddTag}
         onRemoveTag={handleRemoveTag}
         formData={formData}
-        onFormChange={handleFormChange}
+        onFormChange={(field, value) => {
+          setErrors((prev) => ({ ...prev, [field]: '' })); // Clear error on change
+          handleFormChange(field, value);
+        }}
         description={description}
         onDescriptionChange={setDescription}
         isGenerating={isGenerating}
+        errors={errors} // Pass errors to StepScreen
       />
 
       <div className='buttons'>
         <button className='button-back' onClick={prevStep}>
           <BackArrow />
         </button>
-        <button className='button-forward' onClick={nextStep}>
+        <button
+          className='button-forward'
+          onClick={() => {
+            if (validateFields()) {
+              nextStep();
+            }
+          }}
+        >
           {step === totalSteps - 1 ? 'Сохранить' : 'Продолжить'}
         </button>
       </div>
