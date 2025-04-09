@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SearchPanel.css';
+import PinButton from '../assets/pinButton';
+import Next from '../assets/Next';
 
 type Company = {
   id: number;
@@ -57,9 +59,14 @@ const SearchPanel: React.FC = () => {
         <div className="company-list">
           {companies.map(company => (
             <div className="company-card" key={company.id}>
-              <h3>{company.name}</h3>
-              <p>{company.city}</p>
-              <p>{company.address}</p>
+              <button className='button-onmap'>
+                <div className="button-onmap-pin"><PinButton /></div>
+                <p className="button-onmap-text">На карте</p>
+              </button>
+              <div className="card-bottom">
+                <h3 className='card-title'>{company.name}</h3>
+                <button className="button-on"><Next /></button>
+              </div>
             </div>
           ))}
         </div>

@@ -3,12 +3,14 @@ import StepForm from './components/StepForm';
 import GuestForm from './components/GuestForm';
 import StartScreen from './components/StartScreen';
 import Map from './components/Map';
+
 import MainScreen from './components/MainScreen';
 
 const App: React.FC = () => {
   const [hasChosen, setHasChosen] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAddBusinessForm, setShowAddBusinessForm] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('userData');
@@ -23,9 +25,20 @@ const App: React.FC = () => {
   };
 
   if (isLoggedIn) {
-    // return <Map apiKey={import.meta.env.VITE_YANDEX_API_KEY} />;
-    return <MainScreen />
+  if (showAddBusinessForm) {
+    return (
+      <StepForm
+        isGuest={false}
+        onSuccessGuest={() => {
+          setShowAddBusinessForm(false);
+        }}
+      />
+    );
   }
+
+  return <MainScreen onAddBusinessClick={() => setShowAddBusinessForm(true)} />;
+}
+
 
   return (
     <>
@@ -34,7 +47,10 @@ const App: React.FC = () => {
       ) : isGuest ? (
         <GuestForm />
       ) : (
-        <StepForm isGuest={false} onSuccessGuest={() => setIsGuest(true)} />
+        <StepForm isGuest={false} onSuccessGuest={() => {
+          setIsLoggedIn(true)
+          setIsGuest(true)
+        }} />
       )}
     </>
   );

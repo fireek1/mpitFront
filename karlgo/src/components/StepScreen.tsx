@@ -16,8 +16,12 @@ type StepScreenProps = {
     city: string;
     businessSphere: string;
     director: string;
+    description?: string;
   };
   onFormChange: (field: string, value: string) => void;
+  description: string;
+  onDescriptionChange: (desc: string) => void;
+  isGenerating: boolean;
 };
 
 const allTags = [
@@ -36,13 +40,31 @@ const StepScreen: React.FC<StepScreenProps> = ({
   onRemoveTag,
   formData,
   onFormChange,
+  description,
+  onDescriptionChange,
+  isGenerating,
 }) => {
+  const fetchDescription = async () => {
+    try {
+      const response = await fetch(`/v1/owner/company/${localStorage.getItem('myCompanies')}/generate-description`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      onFormChange('description', data.description || 'Описание не удалось сгенерировать');
+    } catch (error) {
+      console.error('Ошибка генерации описания:', error);
+      onFormChange('description', 'Ошибка при генерации описания.');
+    }
+  };
+
   return (
     <div>
       {step === 0 && (
         <>
-          <h2 className='step-title'>Шаг 2 из 4: Основная информация</h2>
-          <StepIndicator currentStep={1} totalSteps={4} />
+          <h2 className='step-title'>Шаг 2 из 5: Основная информация</h2>
+          <StepIndicator currentStep={1} totalSteps={5} />
           <h4 className='input-title'>Название организации</h4>
           <input value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} />
           <h4 className='input-title'>ИНН</h4>
@@ -51,10 +73,11 @@ const StepScreen: React.FC<StepScreenProps> = ({
           <input value={formData.organizationType} onChange={(e) => onFormChange('organizationType', e.target.value)} />
         </>
       )}
+
       {step === 1 && (
         <>
-          <h2 className='step-title'>Шаг 3 из 4: Адрес и контакты</h2>
-          <StepIndicator currentStep={2} totalSteps={4} />
+          <h2 className='step-title'>Шаг 3 из 5: Адрес и контакты</h2>
+          <StepIndicator currentStep={2} totalSteps={5} />
           <h4 className='input-title'>Город:</h4>
           <input value={formData.city} onChange={(e) => onFormChange('city', e.target.value)} />
           <h4 className='input-title'>Адрес:</h4>
@@ -63,10 +86,11 @@ const StepScreen: React.FC<StepScreenProps> = ({
           <input value={formData.director} onChange={(e) => onFormChange('director', e.target.value)} />
         </>
       )}
+
       {step === 2 && (
         <>
-          <h4 className='step-title'>Шаг 4 из 4: Интересы бизнеса</h4>
-          <StepIndicator currentStep={3} totalSteps={4} />
+          <h4 className='step-title'>Шаг 4 из 5: Интересы бизнеса</h4>
+          <StepIndicator currentStep={3} totalSteps={5} />
           <h4 className='input-title'>Сфера деятельности</h4>
           <input value={formData.businessSphere} onChange={(e) => onFormChange('businessSphere', e.target.value)} />
           <TagSelector
@@ -75,6 +99,35 @@ const StepScreen: React.FC<StepScreenProps> = ({
             onSelect={onAddTag}
             onRemove={onRemoveTag}
           />
+        </>
+      )}
+
+      {step === 3 && (
+        <>
+          <h4 className='step-title'>Шаг 5 из 5: Описание бизнеса</h4>
+          <StepIndicator currentStep={4} totalSteps={5} />
+
+          <h4 className='input-title'>Описание:</h4>
+          <textarea
+            style={{ width: '100%', minHeight: '120px', marginBottom: '16px', padding: '10px', borderRadius: '8px' }}
+            value={isGenerating ? 'Генерация...' : description}
+            onChange={(e) => onDescriptionChange(e.target.value)}
+            placeholder="Описание будет сгенерировано автоматически..."
+            disabled={isGenerating}
+          />
+          <button
+          onClick={fetchDescription} // ← теперь генерация только по клику
+          style={{
+            marginTop: '12px',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            backgroundColor: '#FF6A00',
+            color: '#fff',
+            border: 'none',
+          }}
+        >
+          Сгенерировать описание
+        </button>
         </>
       )}
     </div>

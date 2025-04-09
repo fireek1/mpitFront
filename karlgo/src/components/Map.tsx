@@ -42,7 +42,7 @@ const Maps: React.FC<MapsProps> = ({ apiKey, zoom = 15 }) => {
 
   // Загрузка компаний
   useEffect(() => {
-    fetch('http://158.160.47.233:8080/v1/geocoder/cords/geo/companies')
+    fetch('v1/geocoder/cords/geo/companies')
       .then(res => res.json())
       .then(data => setCompanies(data))
       .catch(err => console.error('Ошибка загрузки компаний:', err));

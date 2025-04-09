@@ -3,9 +3,12 @@ import Maps from './Map';
 import SearchPanel from './SearchPanel';
 import './MainScreen.css';
 import OrangeLogo from '../assets/OrangeLogo2';
-import User from '../assets/User';
 
-const MainScreen: React.FC = () => {
+type MainScreenProps = {
+  onAddBusinessClick: () => void;
+};
+
+const MainScreen: React.FC<MainScreenProps> = ({ onAddBusinessClick }) => {
   const [currentScreen, setCurrentScreen] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [slideWidth, setSlideWidth] = useState(0);
@@ -65,8 +68,10 @@ const MainScreen: React.FC = () => {
       onTouchEnd={handleTouchEnd}
     >
       <div className="top-bar">
-            <OrangeLogo />
-            <User />
+        <OrangeLogo />
+        <button className='reg-new' onClick={onAddBusinessClick}>
+          Добавить бизнес
+        </button>
       </div>
 
       <div
