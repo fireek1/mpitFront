@@ -55,8 +55,9 @@
   }
   
   .start-screen__title {
-    font-size: 48px;
+    font-size: 43px;
     line-height: 0.9;
+    letter-spacing: -0.5px;
     font-family: sans-serif;
     font-weight: 400;
   }
@@ -72,11 +73,11 @@
     background-color: #FF6A00;
     color: white;
     height: 64px;
-    font-weight: 600;
     border: none;
     border-radius: 9999px;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
+    letter-spacing: -0.3px;
   }
   
   .start-screen__button--secondary {
@@ -85,6 +86,7 @@
     color: white;
     background: transparent;
     border-radius: 9999px;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
+    letter-spacing: -0.3px;
   }

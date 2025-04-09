@@ -39,16 +39,21 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
   };
 
   const nextStep = () => {
+    const isValid = validateStep();
+    if (!isValid) return; // не переходим дальше
+  
     if (step < totalSteps - 1) {
       if (step === 3) {
-        handleSubmit(); // отправка данных на шаге 4
+        handleSubmit(); // если это последний шаг перед генерацией
       } else {
         setStep(step + 1);
       }
     } else {
-      handleUpdateDescription(); // отправка финального описания на шаге 5
+      handleUpdateDescription(); // если это финальный шаг
     }
   };
+  
+  
 
   const prevStep = () => {
     if (step === 0) {
@@ -82,12 +87,11 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
       if (data?.id) {
         setCreatedCompanyId(data.id);
 
-        // сохранить в localStorage
         const stored = localStorage.getItem('myCompanies');
         const myCompanies = stored ? JSON.parse(stored) : [];
         localStorage.setItem('myCompanies', JSON.stringify([...myCompanies, data.id]));
 
-        setStep(step + 1); // перейти на шаг 5
+        setStep(step + 1);
       }
     } catch (err) {
       console.error('Ошибка при создании компании:', err);
@@ -133,6 +137,56 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
       console.error('Ошибка обновления описания:', err);
     }
   };
+
+  const validateStep = (): boolean => {
+    switch (step) {
+      case 0:
+        if (!formData.name.trim()) {
+          alert('Название организации не может быть пустым');
+          return false;
+        }
+        if (!/^\d{10}(\d{2})?$/.test(formData.inn)) {
+          alert('ИНН должен содержать 10 или 12 цифр');
+          return false;
+        }
+        if (!formData.organizationType.trim()) {
+          alert('Тип организации обязателен');
+          return false;
+        }
+        break;
+  
+      case 1:
+        if (!formData.city.trim()) {
+          alert('Введите город');
+          return false;
+        }
+        if (!formData.address.trim()) {
+          alert('Введите адрес');
+          return false;
+        }
+        if (!formData.director.trim()) {
+          alert('Введите ФИО руководителя');
+          return false;
+        }
+        break;
+  
+      case 2:
+        if (!formData.businessSphere.trim()) {
+          alert('Введите сферу деятельности');
+          return false;
+        }
+        if (selectedTags.length === 0) {
+          alert('Выберите хотя бы один интерес');
+          return false;
+        }
+        break;
+  
+      default:
+        return true;
+    }
+  
+    return true;
+  };  
 
   return (
     <div className='main'>
