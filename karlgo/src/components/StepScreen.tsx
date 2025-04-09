@@ -76,13 +76,19 @@ const StepScreen: React.FC<StepScreenProps> = ({
 
   const fetchDescription = async () => {
     try {
-      const response = await fetch(`/v1/owner/company/${localStorage.getItem('myCompanies')}/generate-description`);
+
+      const id = localStorage.getItem('createdCompanyId');
+      console.log(id);
+      
+      const response = await fetch(`/v1/owner/company/${id}/generate-description`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
   
       const data = await response.json();
-      onFormChange('description', data.description || 'Описание не удалось сгенерировать');
+      console.log(data.Description);
+      onFormChange('description', data.Description || 'Описание не удалось сгенерировать');
+      onDescriptionChange(data.Description);
     } catch (error) {
       console.error('Ошибка генерации описания:', error);
       onFormChange('description', 'Ошибка при генерации описания.');

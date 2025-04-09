@@ -59,7 +59,7 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
   const nextStep = () => {
     if (step < totalSteps - 1) {
       if (validateFields()) {
-        if (step === 3) {
+        if (step === 2) {
           handleSubmit(); // отправка данных на шаге 4
         } else {
           setStep(step + 1);
@@ -101,6 +101,7 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
       const data = await response.json();
       if (data?.id) {
         setCreatedCompanyId(data.id);
+        localStorage.setItem('createdCompanyId', data.id.toString()); // сохранить ID компании в localStorage
 
         // сохранить в localStorage
         const stored = localStorage.getItem('myCompanies');
@@ -119,7 +120,8 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     setIsGenerating(true);
 
     try {
-      const res = await fetch(`/v1/owner/company/${16}/generate-description`);
+      console.log(createdCompanyId);
+      const res = await fetch(`/v1/owner/company/${createdCompanyId}/generate-description`);
       const data = await res.json();
       if (data?.description) {
         setDescription(data.description);
