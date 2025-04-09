@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TagSelector from './TagSelector';
 import StepIndicator from './StepIndicator';
 import './StepScreen.css';
@@ -22,6 +22,7 @@ type StepScreenProps = {
   description: string;
   onDescriptionChange: (desc: string) => void;
   isGenerating: boolean;
+  errors: { [key: string]: string }; // Add errors prop
 };
 
 const allTags = [
@@ -43,16 +44,51 @@ const StepScreen: React.FC<StepScreenProps> = ({
   description,
   onDescriptionChange,
   isGenerating,
+  errors,
 }) => {
+  const [localErrors, setLocalErrors] = useState<{ [key: string]: string }>({});
+
+  const validateField = (field: string, value: string) => {
+    let error = '';
+    if (field === 'name' && value.trim() === '') {
+      error = 'Название организации не может быть пустым.';
+    } else if (field === 'inn' && !/^\d{10}$/.test(value)) {
+      error = 'ИНН должен содержать 10 цифр.';
+    } else if (field === 'organizationType' && value.trim() === '') {
+      error = 'Тип организации не может быть пустым.';
+    } else if (field === 'city' && value.trim() === '') {
+      error = 'Город не может быть пустым.';
+    } else if (field === 'address' && value.trim() === '') {
+      error = 'Адрес не может быть пустым.';
+    } else if (field === 'director' && value.trim() === '') {
+      error = 'ФИО руководителя не может быть пустым.';
+    } else if (field === 'businessSphere' && value.trim() === '') {
+      error = 'Сфера деятельности не может быть пустой.';
+    }
+    setLocalErrors((prev) => ({ ...prev, [field]: error }));
+    return error === '';
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    onFormChange(field, value); // Update the state first
+    validateField(field, value); // Then validate the field
+  };
+
   const fetchDescription = async () => {
     try {
-      const response = await fetch(`/v1/owner/company/${localStorage.getItem('myCompanies')}/generate-description`);
+
+      const id = localStorage.getItem('createdCompanyId');
+      console.log(id);
+      
+      const response = await fetch(`/v1/owner/company/${id}/generate-description`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
   
       const data = await response.json();
-      onFormChange('description', data.description || 'Описание не удалось сгенерировать');
+      console.log(data.Description);
+      onFormChange('description', data.Description || 'Описание не удалось сгенерировать');
+      onDescriptionChange(data.Description);
     } catch (error) {
       console.error('Ошибка генерации описания:', error);
       onFormChange('description', 'Ошибка при генерации описания.');
@@ -66,11 +102,28 @@ const StepScreen: React.FC<StepScreenProps> = ({
           <h2 className='step-title'>Шаг 2 из 5: Основная информация</h2>
           <StepIndicator currentStep={1} totalSteps={5} />
           <h4 className='input-title'>Название организации</h4>
-          <input value={formData.name} onChange={(e) => onFormChange('name', e.target.value)} />
+          {errors.name && <p className="error-text" style={{ color: 'red' }}>{errors.name}</p>}
+          <input
+            value={formData.name}
+            onChange={(e) => handleFieldChange('name', e.target.value)}
+          />
           <h4 className='input-title'>ИНН</h4>
-          <input value={formData.inn} onChange={(e) => onFormChange('inn', e.target.value)} />
+          {errors.inn && <p className="error-text" style={{ color: 'red' }}>{errors.inn}</p>}
+          <input
+            value={formData.inn}
+            type='text'
+            maxLength={10} // Restrict input to 10 characters
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+              handleFieldChange('inn', value); // Update and validate
+            }}
+          />
           <h4 className='input-title'>Тип организации</h4>
-          <input value={formData.organizationType} onChange={(e) => onFormChange('organizationType', e.target.value)} />
+          {errors.organizationType && <p className="error-text" style={{ color: 'red' }}>{errors.organizationType}</p>}
+          <input
+            value={formData.organizationType}
+            onChange={(e) => handleFieldChange('organizationType', e.target.value)}
+          />
         </>
       )}
 
@@ -79,11 +132,23 @@ const StepScreen: React.FC<StepScreenProps> = ({
           <h2 className='step-title'>Шаг 3 из 5: Адрес и контакты</h2>
           <StepIndicator currentStep={2} totalSteps={5} />
           <h4 className='input-title'>Город:</h4>
-          <input value={formData.city} onChange={(e) => onFormChange('city', e.target.value)} />
+          {errors.city && <p className="error-text" style={{ color: 'red' }}>{errors.city}</p>}
+          <input
+            value={formData.city}
+            onChange={(e) => handleFieldChange('city', e.target.value)}
+          />
           <h4 className='input-title'>Адрес:</h4>
-          <input value={formData.address} onChange={(e) => onFormChange('address', e.target.value)} />
+          {errors.address && <p className="error-text" style={{ color: 'red' }}>{errors.address}</p>}
+          <input
+            value={formData.address}
+            onChange={(e) => handleFieldChange('address', e.target.value)}
+          />
           <h4 className='input-title'>ФИО руководителя:</h4>
-          <input value={formData.director} onChange={(e) => onFormChange('director', e.target.value)} />
+          {errors.director && <p className="error-text" style={{ color: 'red' }}>{errors.director}</p>}
+          <input
+            value={formData.director}
+            onChange={(e) => handleFieldChange('director', e.target.value)}
+          />
         </>
       )}
 
@@ -92,7 +157,11 @@ const StepScreen: React.FC<StepScreenProps> = ({
           <h4 className='step-title'>Шаг 4 из 5: Интересы бизнеса</h4>
           <StepIndicator currentStep={3} totalSteps={5} />
           <h4 className='input-title'>Сфера деятельности</h4>
-          <input value={formData.businessSphere} onChange={(e) => onFormChange('businessSphere', e.target.value)} />
+          {errors.businessSphere && <p className="error-text" style={{ color: 'red' }}>{errors.businessSphere}</p>}
+          <input
+            value={formData.businessSphere}
+            onChange={(e) => handleFieldChange('businessSphere', e.target.value)}
+          />
           <TagSelector
             allTags={allTags}
             selectedTags={selectedTags}

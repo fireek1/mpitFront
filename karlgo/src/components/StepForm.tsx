@@ -17,6 +17,7 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
   const [createdCompanyId, setCreatedCompanyId] = useState<number | null>(null);
   const [description, setDescription] = useState<string>('Генерация...');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -38,22 +39,36 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     setSelectedTags(selectedTags.filter((t) => t !== tag));
   };
 
+  const validateFields = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (step === 0) {
+      if (!formData.name.trim()) newErrors.name = 'Название организации не может быть пустым.';
+      if (!/^\d{10}$/.test(formData.inn)) newErrors.inn = 'ИНН должен содержать 10 цифр.';
+      if (!formData.organizationType.trim()) newErrors.organizationType = 'Тип организации не может быть пустым.';
+    } else if (step === 1) {
+      if (!formData.city.trim()) newErrors.city = 'Город не может быть пустым.';
+      if (!formData.address.trim()) newErrors.address = 'Адрес не может быть пустым.';
+      if (!formData.director.trim()) newErrors.director = 'ФИО руководителя не может быть пустым.';
+    } else if (step === 2) {
+      if (!formData.businessSphere.trim()) newErrors.businessSphere = 'Сфера деятельности не может быть пустой.';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const nextStep = () => {
-    const isValid = validateStep();
-    if (!isValid) return; // не переходим дальше
-  
     if (step < totalSteps - 1) {
-      if (step === 3) {
-        handleSubmit(); // если это последний шаг перед генерацией
-      } else {
-        setStep(step + 1);
+      if (validateFields()) {
+        if (step === 2) {
+          handleSubmit(); // отправка данных на шаге 4
+        } else {
+          setStep(step + 1);
+        }
       }
     } else {
-      handleUpdateDescription(); // если это финальный шаг
+      handleUpdateDescription(); // отправка финального описания на шаге 5
     }
   };
-  
-  
 
   const prevStep = () => {
     if (step === 0) {
@@ -86,12 +101,14 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
       const data = await response.json();
       if (data?.id) {
         setCreatedCompanyId(data.id);
+        localStorage.setItem('createdCompanyId', data.id.toString()); // сохранить ID компании в localStorage
 
+        // сохранить в localStorage
         const stored = localStorage.getItem('myCompanies');
         const myCompanies = stored ? JSON.parse(stored) : [];
         localStorage.setItem('myCompanies', JSON.stringify([...myCompanies, data.id]));
 
-        setStep(step + 1);
+        setStep(step + 1); // перейти на шаг 5
       }
     } catch (err) {
       console.error('Ошибка при создании компании:', err);
@@ -103,7 +120,8 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     setIsGenerating(true);
 
     try {
-      const res = await fetch(`/v1/owner/company/${16}/generate-description`);
+      console.log(createdCompanyId);
+      const res = await fetch(`/v1/owner/company/${createdCompanyId}/generate-description`);
       const data = await res.json();
       if (data?.description) {
         setDescription(data.description);
@@ -138,56 +156,6 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
     }
   };
 
-  const validateStep = (): boolean => {
-    switch (step) {
-      case 0:
-        if (!formData.name.trim()) {
-          alert('Название организации не может быть пустым');
-          return false;
-        }
-        if (!/^\d{10}(\d{2})?$/.test(formData.inn)) {
-          alert('ИНН должен содержать 10 или 12 цифр');
-          return false;
-        }
-        if (!formData.organizationType.trim()) {
-          alert('Тип организации обязателен');
-          return false;
-        }
-        break;
-  
-      case 1:
-        if (!formData.city.trim()) {
-          alert('Введите город');
-          return false;
-        }
-        if (!formData.address.trim()) {
-          alert('Введите адрес');
-          return false;
-        }
-        if (!formData.director.trim()) {
-          alert('Введите ФИО руководителя');
-          return false;
-        }
-        break;
-  
-      case 2:
-        if (!formData.businessSphere.trim()) {
-          alert('Введите сферу деятельности');
-          return false;
-        }
-        if (selectedTags.length === 0) {
-          alert('Выберите хотя бы один интерес');
-          return false;
-        }
-        break;
-  
-      default:
-        return true;
-    }
-  
-    return true;
-  };  
-
   return (
     <div className='main'>
       <OrangeLogo />
@@ -199,17 +167,28 @@ const StepForm: React.FC<Props> = ({ isGuest, onSuccessGuest }) => {
         onAddTag={handleAddTag}
         onRemoveTag={handleRemoveTag}
         formData={formData}
-        onFormChange={handleFormChange}
+        onFormChange={(field, value) => {
+          setErrors((prev) => ({ ...prev, [field]: '' })); // Clear error on change
+          handleFormChange(field, value);
+        }}
         description={description}
         onDescriptionChange={setDescription}
         isGenerating={isGenerating}
+        errors={errors} // Pass errors to StepScreen
       />
 
       <div className='buttons'>
         <button className='button-back' onClick={prevStep}>
           <BackArrow />
         </button>
-        <button className='button-forward' onClick={nextStep}>
+        <button
+          className='button-forward'
+          onClick={() => {
+            if (validateFields()) {
+              nextStep();
+            }
+          }}
+        >
           {step === totalSteps - 1 ? 'Сохранить' : 'Продолжить'}
         </button>
       </div>
