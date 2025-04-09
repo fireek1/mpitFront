@@ -30,8 +30,8 @@
     display: flex;
     flex: 1;
     overflow: hidden;
-    transition: transform 0.4s ease-in-out;
-    width: calc(200% + 64px);
+    transition: all 0.4s ease-in-out;
+    width: calc(300% + 128px);
   }
   
   .screen-slide {
@@ -106,3 +106,9 @@
     cursor: pointer;
   }
   
+
+.screen-anal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
